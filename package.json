@@ -1,0 +1,20 @@
+{
+  "name": "potion",
+  "version": "0.0.1",
+  "description": "Personalized Notion.",
+  "main": "main.js",
+  "scripts": {
+    "start": "./node_modules/.bin/electron ."
+  },
+  "repository": "https://github.com/electron/electron-quick-start",
+  "keywords": [
+    "Notion",
+    "Productivity"
+  ],
+  "author": "xupeng",
+  "license": "CC0-1.0",
+  "devDependencies": {
+    "electron": "^8.0.3",
+    "electron-settings": "^3.2.0"
+  }
+}

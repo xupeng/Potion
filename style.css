@@ -1,0 +1,25 @@
+* {
+    font-family: "PMN Caecilia LT", AaFangSong, "TsangerJinKai01-9128 W04", STKaiti;
+    line-height: 1.7em;
+}
+
+div.notion-quote-block div {
+    font-size: 0.8em;
+}
+
+div.notion-header-block div, div.notion-sub_header-block div, div.notion-sub_sub_header-block div {
+    font-family: "PMN Caecilia LT", STKaiti;
+}
+
+/*
+div.notion-page-content div,
+div.notion-page-block div {
+    font-family: "PMN Caecilia LT", AaFangSong, "TsangerJinKai01-9128 W03", STKaiti;
+}
+*/
+
+/*
+div.notion-page-block11 div{
+    font-family: "PMN Caecilia LT", STKaiti;
+}
+*/
