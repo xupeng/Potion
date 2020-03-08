@@ -1,7 +1,25 @@
-const { app, BrowserWindow } = require('electron')
+const { app, globalShortcut, BrowserWindow } = require('electron')
 const path = require('path');
 const { readFile } = require('fs');
 const settings = require('electron-settings');
+
+let mainWindow
+
+function injectCSS(win) {
+  css_file = path.join(__dirname, 'style.css')
+  readFile(css_file, "utf-8", (err, data) => {
+    win.webContents.insertCSS(data)
+  })
+}
+
+function newTab() {
+  tw = new BrowserWindow()
+  tw.loadURL(mainWindow.webContents.getURL())
+  mainWindow.addTabbedWindow(tw)
+  tw.webContents.on('did-finish-load', function () {
+    injectCSS(tw)
+  })
+}
 
 function createWindow() {
   let windowState = settings.get('windowState')
@@ -14,7 +32,7 @@ function createWindow() {
     }
   }
   // Create the browser window.
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     title: 'Potion',
     x: windowState.x,
     y: windowState.y,
@@ -25,32 +43,28 @@ function createWindow() {
     }
   })
 
-  // and load the index.html of the app.
-  // mainWindow.loadFile('index.html')
   let url = settings.get('lasturl')
   if (url == null) {
-    mainWindow.loadURL('https://notion.so/xupeng')
+    mainWindow.loadURL('https://notion.so/')
   } else {
     mainWindow.loadURL(url)
   }
 
   mainWindow.webContents.on('did-finish-load', function () {
-    css_file = path.join(__dirname, 'style.css')
-    readFile(css_file, "utf-8", (err, data) => {
-      mainWindow.webContents.insertCSS(data)
-    })
+    injectCSS(mainWindow)
   });
 
-  let wc = mainWindow.webContents
+  mainWindow.webContents.on('new-window', function (event, url) {
+    event.preventDefault()
+    const { shell } = require('electron')
+    shell.openExternal(url)
+  });
 
-  wc.on('page-title-updated', function(){
-    console.log(wc.getURL())
-    settings.set('lasturl', wc.getURL())
+  mainWindow.webContents.on('page-title-updated', function () {
+    let url = mainWindow.webContents.getURL()
+    console.log("Navigate to", url)
+    settings.set('lasturl', url)
   })
-
-  // tw = new BrowserWindow()
-  // tw.loadURL('https://www.douban.com/')
-  // mainWindow.addTabbedWindow(tw)
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
@@ -59,23 +73,14 @@ function createWindow() {
 app.name = 'Potion'
 // app.setBadgeCount(10)
 
-/* app.setJumpList([
-  {
-    type: 'custom',
-    name: 'RRR',
-    items: [
-      {
-        type: 'file',
-        path: '/etc/passwd'
-      }
-    ]
-  }
-]) */
-
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
 app.on('ready', createWindow)
+
+app.on('ready', () => {
+  globalShortcut.register('CommandOrControl+G', () => {
+  console.log('Create new tab...')
+  newTab()
+  })
+})
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
@@ -100,9 +105,10 @@ app.on('web-contents-created', (event, webContents) => {
   // console.log('wwwwww')
 })
 
-app.on('before-quit', function(){
+app.on('before-quit', function () {
   console.log('before quit')
   let win = BrowserWindow.getAllWindows()[0]
   settings.set('windowState', win.getBounds())
   console.log(win.getBounds())
 })
+
