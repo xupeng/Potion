@@ -4,6 +4,7 @@ const { readFile } = require('fs');
 const settings = require('electron-settings');
 
 let mainWindow
+let currentWindow
 
 function setupSystemMenu() {
   var isElectronMac = process.platform === "darwin";
@@ -62,55 +63,14 @@ function setupSystemMenu() {
         label: "Reload",
         accelerator: "CmdOrCtrl+R",
         click: function () {
-          var e_1, _a;
-          var focusedWebContents = electron_1.webContents.getFocusedWebContents();
-          if (focusedWebContents) {
-            if (focusedWebContents.hostWebContents) {
-              try {
-                for (var _b = __values(electron_1.webContents.getAllWebContents()), _c = _b.next(); !_c.done; _c = _b.next()) {
-                  var webContentsInstance = _c.value;
-                  if (webContentsInstance.hostWebContents ===
-                    focusedWebContents.hostWebContents) {
-                    webContentsInstance.reload();
-                  }
-                }
-              }
-              catch (e_1_1) { e_1 = { error: e_1_1 }; }
-              finally {
-                try {
-                  if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
-                }
-                finally { if (e_1) throw e_1.error; }
-              }
-            }
-            else {
-              focusedWebContents.reload();
-            }
-          }
+          currentWindow.webContents.reload()
         },
       },
       {
         label: "Toggle Developer Tools",
         accelerator: isElectronMac ? "Alt+Command+I" : "Ctrl+Shift+I",
         click: function () {
-          var focusedWebContents = electron_1.webContents.getFocusedWebContents();
-          if (focusedWebContents) {
-            var focusedWebContentsUrl = focusedWebContents.getURL();
-            if (focusedWebContentsUrl.startsWith("file://") &&
-              focusedWebContentsUrl.endsWith("/search.html")) {
-              var notionWebviewWebContents = electron_1.webContents
-                .getAllWebContents()
-                .find(function (webContentsInstance) {
-                  return webContentsInstance.hostWebContents ===
-                    focusedWebContents.hostWebContents &&
-                    webContentsInstance !== focusedWebContents;
-                });
-              if (notionWebviewWebContents) {
-                focusedWebContents = notionWebviewWebContents;
-              }
-            }
-            focusedWebContents.toggleDevTools();
-          }
+          currentWindow.webContents.openDevTools()
         },
       },
       {
@@ -160,7 +120,7 @@ function setupSystemMenu() {
       {
         label: "Open Help && Support",
         click: function () {
-          electron_1.shell.openExternal(config_1.default.baseURL + "/help");
+          electron_1.shell.openExternal("https://www.notion.so/help");
         },
       },
     ],
@@ -314,3 +274,7 @@ app.on('before-quit', function () {
   console.log(win.getBounds())
 })
 
+
+app.on('browser-window-focus', function (event, window) {
+  currentWindow = window
+})
