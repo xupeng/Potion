@@ -1,9 +1,215 @@
-const { app, globalShortcut, BrowserWindow } = require('electron')
+const { app, Menu, BrowserWindow } = require('electron')
 const path = require('path');
 const { readFile } = require('fs');
 const settings = require('electron-settings');
 
 let mainWindow
+
+function setupSystemMenu() {
+  var isElectronMac = process.platform === "darwin";
+  var fileMenu = {
+    role: "fileMenu",
+    submenu: isElectronMac
+      ? [
+        {
+          label: "New Tab",
+          accelerator: "CmdOrCtrl+T",
+          click: function () { return newTab(); },
+        },
+        { role: "close" },
+      ]
+      : [
+        {
+          label: "New Tab",
+          accelerator: "CmdOrCtrl+T",
+          click: function () { return newTab(); },
+        },
+        { role: "quit" },
+      ],
+  };
+  var editMenu = {
+    role: "editMenu",
+    submenu: isElectronMac
+      ? [
+        { role: "undo" },
+        { role: "redo" },
+        { type: "separator" },
+        { role: "cut" },
+        { role: "copy" },
+        { role: "paste" },
+        { role: "selectAll" },
+        { type: "separator" },
+        {
+          label: "Speech",
+          submenu: [{ role: "startSpeaking" }, { role: "stopSpeaking" }],
+        },
+      ]
+      : [
+        { role: "undo" },
+        { role: "redo" },
+        { type: "separator" },
+        { role: "cut" },
+        { role: "copy" },
+        { role: "paste" },
+        { type: "separator" },
+        { role: "selectAll" },
+      ],
+  };
+  var viewMenu = {
+    role: "viewMenu",
+    submenu: [
+      {
+        label: "Reload",
+        accelerator: "CmdOrCtrl+R",
+        click: function () {
+          var e_1, _a;
+          var focusedWebContents = electron_1.webContents.getFocusedWebContents();
+          if (focusedWebContents) {
+            if (focusedWebContents.hostWebContents) {
+              try {
+                for (var _b = __values(electron_1.webContents.getAllWebContents()), _c = _b.next(); !_c.done; _c = _b.next()) {
+                  var webContentsInstance = _c.value;
+                  if (webContentsInstance.hostWebContents ===
+                    focusedWebContents.hostWebContents) {
+                    webContentsInstance.reload();
+                  }
+                }
+              }
+              catch (e_1_1) { e_1 = { error: e_1_1 }; }
+              finally {
+                try {
+                  if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+                }
+                finally { if (e_1) throw e_1.error; }
+              }
+            }
+            else {
+              focusedWebContents.reload();
+            }
+          }
+        },
+      },
+      {
+        label: "Toggle Developer Tools",
+        accelerator: isElectronMac ? "Alt+Command+I" : "Ctrl+Shift+I",
+        click: function () {
+          var focusedWebContents = electron_1.webContents.getFocusedWebContents();
+          if (focusedWebContents) {
+            var focusedWebContentsUrl = focusedWebContents.getURL();
+            if (focusedWebContentsUrl.startsWith("file://") &&
+              focusedWebContentsUrl.endsWith("/search.html")) {
+              var notionWebviewWebContents = electron_1.webContents
+                .getAllWebContents()
+                .find(function (webContentsInstance) {
+                  return webContentsInstance.hostWebContents ===
+                    focusedWebContents.hostWebContents &&
+                    webContentsInstance !== focusedWebContents;
+                });
+              if (notionWebviewWebContents) {
+                focusedWebContents = notionWebviewWebContents;
+              }
+            }
+            focusedWebContents.toggleDevTools();
+          }
+        },
+      },
+      {
+        label: "Toggle Window Developer Tools",
+        accelerator: isElectronMac ? "Shift+Alt+Command+I" : "Alt+Ctrl+Shift+I",
+        visible: false,
+        click: function (menuItem, focusedWindow) {
+          if (focusedWindow) {
+            focusedWindow.webContents.toggleDevTools();
+          }
+        },
+      },
+      { type: "separator" },
+      { role: "togglefullscreen" },
+    ],
+  };
+  var windowMenu = {
+    role: "windowMenu",
+    submenu: isElectronMac
+      ? [
+        { role: "minimize" },
+        { role: "zoom" },
+        { type: "separator" },
+        { role: "front" },
+      ]
+      : [
+        { role: "minimize" },
+        {
+          label: "Maximize",
+          click: function (item, focusedWindow) {
+            if (focusedWindow) {
+              if (focusedWindow.isMaximized()) {
+                focusedWindow.unmaximize();
+              }
+              else {
+                focusedWindow.maximize();
+              }
+            }
+          },
+        },
+        { role: "close" },
+      ],
+  };
+  var helpMenu = {
+    role: "help",
+    submenu: [
+      {
+        label: "Open Help && Support",
+        click: function () {
+          electron_1.shell.openExternal(config_1.default.baseURL + "/help");
+        },
+      },
+    ],
+  };
+  var appMenu = {
+    role: "appMenu",
+    submenu: [
+      { role: "about" },
+      { type: "separator" },
+      {
+        label: "Reset App && Clear Local Data",
+        click: function (item, focusedWindow) {
+          return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+              switch (_a.label) {
+                case 0: return [4, fs.remove(electron_1.app.getPath("userData"))];
+                case 1:
+                  _a.sent();
+                  electron_1.app.relaunch();
+                  electron_1.app.exit();
+                  return [2];
+              }
+            });
+          });
+        },
+      },
+      { type: "separator" },
+      { role: "services" },
+      { type: "separator" },
+      { role: "hide" },
+      { role: "hideOthers" },
+      { role: "unhide" },
+      { type: "separator" },
+      { role: "quit" },
+    ],
+  };
+  var template = [
+    fileMenu,
+    editMenu,
+    viewMenu,
+    windowMenu,
+    helpMenu,
+  ];
+  if (isElectronMac) {
+    template.unshift(appMenu);
+  }
+  var menu = Menu.buildFromTemplate(template);
+  Menu.setApplicationMenu(menu);
+}
 
 function injectCSS(win) {
   css_file = path.join(__dirname, 'style.css')
@@ -66,6 +272,8 @@ function createWindow() {
     settings.set('lasturl', url)
   })
 
+  setupSystemMenu()
+
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
 }
@@ -75,12 +283,6 @@ app.name = 'Potion'
 
 app.on('ready', createWindow)
 
-app.on('ready', () => {
-  globalShortcut.register('CommandOrControl+G', () => {
-  console.log('Create new tab...')
-  newTab()
-  })
-})
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
