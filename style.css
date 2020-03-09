@@ -11,15 +11,6 @@ div.notion-header-block div, div.notion-sub_header-block div, div.notion-sub_sub
     font-family: "PMN Caecilia LT", STKaiti;
 }
 
-/*
-div.notion-page-content div,
-div.notion-page-block div {
-    font-family: "PMN Caecilia LT", AaFangSong, "TsangerJinKai01-9128 W03", STKaiti;
+div.notion-code-block div span {
+    font-family: Consolas, monospace;
 }
-*/
-
-/*
-div.notion-page-block11 div{
-    font-family: "PMN Caecilia LT", STKaiti;
-}
-*/

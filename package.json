@@ -1,16 +1,23 @@
 {
   "name": "potion",
+  "productName": "Potion",
   "version": "0.0.1",
+  "icon": "assets/Notion.icns",
+  "displayName": "Potion",
   "description": "Personalized Notion.",
   "main": "main.js",
   "scripts": {
-    "start": "./node_modules/.bin/electron ."
+    "start": "electron .",
+    "build": "electron-packager --overwrite --icon=assets/Notion.icns ."
   },
-  "repository": "https://github.com/electron/electron-quick-start",
+  "repository": "https://github.com/xupeng/Potion",
   "keywords": [
     "Notion",
     "Productivity"
   ],
+  "dependencies": {
+    "electron-settings": "^3.2.0"
+  },
   "author": "xupeng",
   "license": "CC0-1.0",
   "devDependencies": {
