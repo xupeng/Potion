@@ -1,5 +1,6 @@
 const { BrowserWindow } = require('electron');
 const path = require('path');
+const log = require('electron-log');
 const settings = require('electron-settings');
 const { readFile } = require('fs');
 

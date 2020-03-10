@@ -16,12 +16,14 @@
     "Productivity"
   ],
   "dependencies": {
+    "electron-log": "^4.0.7",
     "electron-settings": "^3.2.0"
   },
   "author": "xupeng",
   "license": "CC0-1.0",
   "devDependencies": {
     "electron": "^8.0.3",
+    "electron-log": "^4.0.7",
     "electron-settings": "^3.2.0"
   }
 }

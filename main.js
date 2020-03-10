@@ -1,4 +1,5 @@
 const { app, BrowserWindow } = require('electron');
+const log = require('electron-log');
 const settings = require('electron-settings');
 const setupmenu = require('./setupMenu');
 const utils = require('./utils');
@@ -6,6 +7,8 @@ const utils = require('./utils');
 app.name = 'Potion'
 
 app.on('ready', function () {
+  log.debug('userData path:', app.getPath('userData'))
+  log.debug('logs path:', app.getPath('logs'))
   utils.createWindow()
   setupmenu.setupSystemMenu()
 })
