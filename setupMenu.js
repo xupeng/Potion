@@ -1,5 +1,7 @@
-const { Menu, BrowserWindow } = require('electron');
+const { Menu, BrowserWindow, dialog } = require('electron');
 const utils = require('./utils');
+const log = require('electron-log');
+const fs = require('fs');
 
 function setupSystemMenu() {
   var isElectronMac = process.platform === "darwin";
@@ -12,6 +14,28 @@ function setupSystemMenu() {
           accelerator: "CmdOrCtrl+T",
           click: function (item, focusedWindow) {
             return utils.newTab();
+          }
+        },
+        {
+          label: "Print to PDF",
+          accelerator: "Ctrl+Shift+P",
+          click: function (item, focusedWindow) {
+            let title = focusedWindow.webContents.getTitle()
+            let filePath = dialog.showSaveDialogSync(focusedWindow, { defaultPath: `${title}.pdf` })
+            let options = {
+              'marginsType': 2,
+              'pageSize': 'A4',
+              'printBackground': false,
+              'landscape': false
+            }
+            focusedWindow.webContents.printToPDF(options).then(data => {
+              fs.writeFile(filePath, data, (error) => {
+                if (error) throw error
+                log.debug(`Write PDF to ${filePath} successfully.`)
+              })
+            }).catch(error => {
+              log.debug(error)
+            })
           }
         },
         { role: "close" },
