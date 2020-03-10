@@ -1,4 +1,4 @@
-const { BrowserWindow } = require('electron');
+const { BrowserWindow, BrowserView, app } = require('electron');
 const path = require('path');
 const log = require('electron-log');
 const settings = require('electron-settings');
@@ -22,23 +22,16 @@ function createWindow(with_url) {
     y: windowState.y,
     width: windowState.width,
     height: windowState.height,
+    tabbingIdentifier: "Potion",
     webPreferences: {
       preload: path.join(__dirname, 'preload.js')
     }
   })
 
-  let url = null
-  if (with_url) {
-    url = with_url
+  if (!with_url) {
+    with_url = 'https://notion.so/'
   }
-  else {
-    url = settings.get('lasturl')
-  }
-  if (url == null) {
-    mainWindow.loadURL('https://notion.so/')
-  } else {
-    mainWindow.loadURL(url)
-  }
+  mainWindow.loadURL(with_url)
 
   mainWindow.webContents.on('did-finish-load', function () {
     injectCSS(mainWindow)
@@ -50,20 +43,15 @@ function createWindow(with_url) {
     shell.openExternal(url)
   });
 
-  mainWindow.webContents.on('page-title-updated', function () {
-    let url = mainWindow.webContents.getURL()
-    if (url.match(notion_url)) {
-      settings.set('lasturl', url)
-    }
-    log.debug("Navigate to", url)
-  })
-
   return mainWindow
 }
 
 function newTab(with_url) {
   let windows = BrowserWindow.getAllWindows()
   let win = windows[windows.length - 1]
+  if(!with_url) {
+    with_url = BrowserWindow.getFocusedWindow().webContents.getURL()
+  }
   tw = createWindow(with_url)
   win.addTabbedWindow(tw)
 }

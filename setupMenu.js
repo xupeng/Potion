@@ -86,6 +86,21 @@ function setupSystemMenu() {
       { role: "togglefullscreen" },
     ],
   };
+  var tabMenu = {
+    label: "Tab",
+    submenu: [
+      {
+        label: "Next Tab",
+        role: "selectNextTab",
+        accelerator: "Ctrl+Tab"
+      },
+      {
+        label: "Previous Tab",
+        role: "selectPreviousTab",
+        accelerator: "Ctrl+Shift+Tab"
+      }
+    ]
+  };
   var windowMenu = {
     role: "windowMenu",
     submenu: isElectronMac
@@ -160,6 +175,7 @@ function setupSystemMenu() {
     fileMenu,
     editMenu,
     viewMenu,
+    tabMenu,
     windowMenu,
     helpMenu,
   ];

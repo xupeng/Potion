@@ -8,7 +8,7 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "build": "electron-packager --overwrite --icon=assets/Potion.icns --protocol=potion ."
+    "build": "electron-packager --overwrite --prune --ignore sync.sh --ignore README.md --icon=assets/Potion.icns --protocol=potion --app-bundle-id me.xupeng.potion --electron-version 8.0.3 ."
   },
   "repository": "https://github.com/xupeng/Potion",
   "keywords": [
@@ -23,7 +23,10 @@
   "license": "CC0-1.0",
   "devDependencies": {
     "electron": "^8.0.3",
-    "electron-log": "^4.0.7",
-    "electron-settings": "^3.2.0"
-  }
+    "electron-packager": "^14.2.1"
+  },
+  "files": [
+    "*.js",
+    "*.html"
+  ]
 }

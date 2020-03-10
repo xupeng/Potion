@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron');
+const { app, webContents, BrowserWindow } = require('electron');
 const log = require('electron-log');
 const settings = require('electron-settings');
 const setupmenu = require('./setupMenu');
@@ -16,11 +16,18 @@ if (!app.requestSingleInstanceLock()) {
 
 app.on('ready', function () {
   app.name = 'Potion'
+  app.allowRendererProcessReuse = false
 
-  log.debug('userData path:', app.getPath('userData'))
-  log.debug('logs path:', app.getPath('logs'))
+  let lastUrls = settings.get('lastUrls')
+  if (!lastUrls) {
+    utils.createWindow('https://notion.so/')
+  } else {
+    utils.createWindow(lastUrls[0])
+    for (i = 1; i < lastUrls.length; i++) {
+      utils.newTab(lastUrls[i])
+    }
+  }
 
-  utils.createWindow()
   setupmenu.setupSystemMenu()
 
   app.setAsDefaultProtocolClient('potion')
@@ -41,8 +48,14 @@ app.on('activate', function () {
 })
 
 app.on('before-quit', function () {
-  windows = BrowserWindow.getAllWindows()
-  let bounds = windows[0].getBounds()
+  wcs = webContents.getAllWebContents()
+  let lastUrls = []
+  for (i = 0; i < wcs.length; i++) {
+    let _url = wcs[i].getURL()
+    lastUrls.unshift(_url)
+  }
+  settings.set('lastUrls', lastUrls)
+  let bounds = BrowserWindow.getAllWindows()[0].getBounds()
   log.debug('Save window bounds:', bounds)
   settings.set('windowState', bounds)
 })
