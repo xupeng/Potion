@@ -18,10 +18,10 @@ function setupSystemMenu() {
       ]
       : [
         {
-          label: "New Tab",
-          accelerator: "CmdOrCtrl+T",
+          label: "New Window",
+          accelerator: "Ctrl+Shift+N",
           click: function (item, focusedWindow) {
-            return utils.newTab();
+            return utils.newWindow();
           }
         },
         { role: "quit" },
@@ -175,12 +175,12 @@ function setupSystemMenu() {
     fileMenu,
     editMenu,
     viewMenu,
-    tabMenu,
     windowMenu,
     helpMenu,
   ];
   if (isElectronMac) {
     template.unshift(appMenu);
+    template.splice(4, 0, tabMenu);
   }
   var menu = Menu.buildFromTemplate(template);
   Menu.setApplicationMenu(menu);

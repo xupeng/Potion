@@ -20,9 +20,9 @@ app.on('ready', function () {
 
   let lastUrls = settings.get('lastUrls')
   if (!lastUrls) {
-    utils.createWindow('https://notion.so/')
+    utils.newWindow()
   } else {
-    utils.createWindow(lastUrls[0])
+    utils.newWindow(lastUrls[0])
     for (i = 1; i < lastUrls.length; i++) {
       utils.newTab(lastUrls[i])
     }
@@ -55,7 +55,4 @@ app.on('before-quit', function () {
     lastUrls.unshift(_url)
   }
   settings.set('lastUrls', lastUrls)
-  let bounds = BrowserWindow.getAllWindows()[0].getBounds()
-  log.debug('Save window bounds:', bounds)
-  settings.set('windowState', bounds)
 })

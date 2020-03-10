@@ -6,53 +6,69 @@ const { readFile } = require('fs');
 
 const notion_url = /^https:\/\/(www.)?notion\.(so|com)/
 
-function createWindow(with_url) {
-  let windowState = settings.get('windowState')
-  if (windowState == null) {
-    windowState = {
-      x: 250,
-      y: 23,
-      height: 1000,
-      width: 1000
-    }
+let windowBounds = { x: 250, y: 23, width: 1000, height: 1000 }
+
+function newWindow(withURL) {
+  let _windowBounds = settings.get('windowBounds')
+  if (_windowBounds) {
+    windowBounds = _windowBounds
   }
-  let mainWindow = new BrowserWindow({
+  let win = new BrowserWindow({
     title: 'Potion',
-    x: windowState.x,
-    y: windowState.y,
-    width: windowState.width,
-    height: windowState.height,
+    x: windowBounds.x,
+    y: windowBounds.y,
+    width: windowBounds.width,
+    height: windowBounds.height,
     tabbingIdentifier: "Potion",
     webPreferences: {
       preload: path.join(__dirname, 'preload.js')
     }
   })
 
-  if (!with_url) {
-    with_url = 'https://notion.so/'
+  if (!withURL) {
+    withURL = 'https://notion.so/'
   }
-  mainWindow.loadURL(with_url)
+  log.debug('New window with URL:', withURL)
+  win.loadURL(withURL)
 
-  mainWindow.webContents.on('did-finish-load', function () {
-    injectCSS(mainWindow)
+  win.webContents.on('did-finish-load', function () {
+    injectCSS(win)
   });
 
-  mainWindow.webContents.on('new-window', function (event, url) {
+  win.webContents.on('new-window', function (event, url) {
     event.preventDefault()
     const { shell } = require('electron')
     shell.openExternal(url)
   });
 
-  return mainWindow
+  win.on('will-resize', (event, bounds) => {
+    windowBounds = bounds
+  })
+
+  win.on('resize', () => {
+    log.debug('Window resized, save window bounds:', windowBounds)
+    settings.set('windowBounds', windowBounds)
+  })
+
+  win.on('will-move', (event, bounds) => {
+    windowBounds = bounds
+  })
+
+  win.on('move', () => {
+    log.debug('Window moved, save window bounds:', windowBounds)
+    settings.set('windowBounds', windowBounds)
+  })
+
+  return win
 }
 
 function newTab(with_url) {
-  let windows = BrowserWindow.getAllWindows()
-  let win = windows[windows.length - 1]
-  if(!with_url) {
+  if (!with_url) {
     with_url = BrowserWindow.getFocusedWindow().webContents.getURL()
   }
-  tw = createWindow(with_url)
+  tw = newWindow(with_url)
+  let windows = BrowserWindow.getAllWindows()
+  let win = windows[windows.length - 1]
   win.addTabbedWindow(tw)
 }
 
@@ -65,4 +81,4 @@ function injectCSS(win) {
 
 exports.newTab = newTab;
 exports.injectCSS = injectCSS;
-exports.createWindow = createWindow;
+exports.newWindow = newWindow;
