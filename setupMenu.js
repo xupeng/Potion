@@ -11,7 +11,7 @@ function setupSystemMenu() {
           label: "New Tab",
           accelerator: "CmdOrCtrl+T",
           click: function (item, focusedWindow) {
-            return utils.newTab(focusedWindow);
+            return utils.newTab();
           }
         },
         { role: "close" },
@@ -21,7 +21,7 @@ function setupSystemMenu() {
           label: "New Tab",
           accelerator: "CmdOrCtrl+T",
           click: function (item, focusedWindow) {
-            return utils.newTab(focusedWindow);
+            return utils.newTab();
           }
         },
         { role: "quit" },

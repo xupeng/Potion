@@ -4,13 +4,32 @@ const settings = require('electron-settings');
 const setupmenu = require('./setupMenu');
 const utils = require('./utils');
 
-app.name = 'Potion'
+
+if (!app.requestSingleInstanceLock()) {
+  log.debug('There is already Potion running, quit...')
+  app.quit()
+} else {
+  app.on('second-instance', (event, commandLine, workingDirectory) => {
+    BrowserWindow.getAllWindows()[0].focus()
+  })
+}
 
 app.on('ready', function () {
+  app.name = 'Potion'
+
   log.debug('userData path:', app.getPath('userData'))
   log.debug('logs path:', app.getPath('logs'))
+
   utils.createWindow()
   setupmenu.setupSystemMenu()
+
+  app.setAsDefaultProtocolClient('potion')
+})
+
+app.on('open-url', (event, url) => {
+  let _url = url.replace(/^potion:\/\//gi, '')
+  log.debug('Open URL via potion protocol:', url, '=>', _url)
+  utils.newTab(_url)
 })
 
 app.on('window-all-closed', function () {
@@ -22,8 +41,8 @@ app.on('activate', function () {
 })
 
 app.on('before-quit', function () {
-  let win = BrowserWindow.getFocusedWindow()
-  let bounds = win.getBounds()
-  console.log('Save window bounds:', bounds)
+  windows = BrowserWindow.getAllWindows()
+  let bounds = windows[0].getBounds()
+  log.debug('Save window bounds:', bounds)
   settings.set('windowState', bounds)
 })

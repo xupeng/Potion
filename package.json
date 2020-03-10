@@ -8,7 +8,7 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "build": "electron-packager --overwrite --icon=assets/Potion.icns ."
+    "build": "electron-packager --overwrite --icon=assets/Potion.icns --protocol=potion ."
   },
   "repository": "https://github.com/xupeng/Potion",
   "keywords": [

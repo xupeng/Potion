@@ -4,7 +4,9 @@ const log = require('electron-log');
 const settings = require('electron-settings');
 const { readFile } = require('fs');
 
-function createWindow() {
+const notion_url = /^https:\/\/(www.)?notion\.(so|com)/
+
+function createWindow(with_url) {
   let windowState = settings.get('windowState')
   if (windowState == null) {
     windowState = {
@@ -25,7 +27,13 @@ function createWindow() {
     }
   })
 
-  let url = settings.get('lasturl')
+  let url = null
+  if (with_url) {
+    url = with_url
+  }
+  else {
+    url = settings.get('lasturl')
+  }
   if (url == null) {
     mainWindow.loadURL('https://notion.so/')
   } else {
@@ -44,15 +52,19 @@ function createWindow() {
 
   mainWindow.webContents.on('page-title-updated', function () {
     let url = mainWindow.webContents.getURL()
-    console.log("Navigate to", url)
-    settings.set('lasturl', url)
+    if (url.match(notion_url)) {
+      settings.set('lasturl', url)
+    }
+    log.debug("Navigate to", url)
   })
 
   return mainWindow
 }
 
-function newTab(win) {
-  tw = createWindow()
+function newTab(with_url) {
+  let windows = BrowserWindow.getAllWindows()
+  let win = windows[windows.length - 1]
+  tw = createWindow(with_url)
   win.addTabbedWindow(tw)
 }
 
