@@ -10,8 +10,8 @@ function setupSystemMenu() {
         {
           label: "New Tab",
           accelerator: "CmdOrCtrl+T",
-          click: function () {
-            return utils.newTab();
+          click: function (item, focusedWindow) {
+            return utils.newTab(focusedWindow);
           }
         },
         { role: "close" },
@@ -20,8 +20,8 @@ function setupSystemMenu() {
         {
           label: "New Tab",
           accelerator: "CmdOrCtrl+T",
-          click: function () {
-            return utils.newTab();
+          click: function (item, focusedWindow) {
+            return utils.newTab(focusedWindow);
           }
         },
         { role: "quit" },

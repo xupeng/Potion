@@ -50,8 +50,7 @@ function createWindow() {
   return mainWindow
 }
 
-function newTab() {
-  let win = BrowserWindow.getFocusedWindow()
+function newTab(win) {
   tw = createWindow()
   win.addTabbedWindow(tw)
 }
