@@ -31,12 +31,22 @@ app.on('ready', function () {
   setupmenu.setupSystemMenu()
 
   app.setAsDefaultProtocolClient('potion')
+  app.setAsDefaultProtocolClient('notion')
 })
 
 app.on('open-url', (event, url) => {
-  let _url = url.replace(/^potion:\/\//gi, '')
-  log.debug('Open URL via potion protocol:', url, '=>', _url)
-  utils.newTab(_url)
+  let _url = null
+  if (url.startsWith('potion://')) {
+    _url = url.replace(/^potion:\/\//gi, '')
+  } else if (url.startsWith('notion:')) {
+    _url = 'https://notion.so' + url.replace(/^notion:/gi, '')
+  }
+  if (_url) {
+    log.debug('Open URL via potion protocol:', url, '=>', _url)
+    utils.newTab(_url)
+  } else {
+    log.debug('Unkonwn URL from potion protocol:', url)
+  }
 })
 
 app.on('window-all-closed', function () {
