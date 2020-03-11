@@ -4,32 +4,25 @@ const log = require('electron-log');
 const settings = require('electron-settings');
 const { readFile } = require('fs');
 
-const notion_url = /^https:\/\/(www.)?notion\.(so|com)/
 
-let windowBounds = { x: 250, y: 23, width: 1000, height: 1000 }
-
-function newWindow(withURL) {
-  let _windowBounds = settings.get('windowBounds')
-  if (_windowBounds) {
-    windowBounds = _windowBounds
-  }
+function newWindow(url=null, windowBounds=null) {
   let win = new BrowserWindow({
     title: 'Potion',
-    x: windowBounds.x,
-    y: windowBounds.y,
-    width: windowBounds.width,
-    height: windowBounds.height,
     tabbingIdentifier: "Potion",
     webPreferences: {
       preload: path.join(__dirname, 'preload.js')
     }
   })
 
-  if (!withURL) {
-    withURL = 'https://notion.so/'
+  if (windowBounds) {
+    win.setBounds(windowBounds)
   }
-  log.debug('New window with URL:', withURL)
-  win.loadURL(withURL)
+
+  if (!url) {
+    url = 'https://notion.so/'
+  }
+  log.debug('New window with URL:', url)
+  win.loadURL(url)
 
   win.webContents.on('did-finish-load', function () {
     injectCSS(win)
@@ -62,11 +55,11 @@ function newWindow(withURL) {
   return win
 }
 
-function newTab(with_url) {
-  if (!with_url) {
-    with_url = BrowserWindow.getFocusedWindow().webContents.getURL()
+function newTab(url) {
+  if (!url) {
+    url = BrowserWindow.getFocusedWindow().webContents.getURL()
   }
-  tw = newWindow(with_url)
+  tw = newWindow(url)
   let windows = BrowserWindow.getAllWindows()
   let win = windows[windows.length - 1]
   win.addTabbedWindow(tw)
@@ -79,6 +72,11 @@ function injectCSS(win) {
   })
 }
 
+function loadWindowBounds() {
+  return settings.get('windowBounds')
+}
+
 exports.newTab = newTab;
 exports.injectCSS = injectCSS;
 exports.newWindow = newWindow;
+exports.loadWindowBounds = loadWindowBounds;

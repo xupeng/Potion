@@ -18,11 +18,12 @@ app.on('ready', function () {
   app.name = 'Potion'
   app.allowRendererProcessReuse = false
 
+  let windowBounds = utils.loadWindowBounds()
   let lastUrls = settings.get('lastUrls')
   if (!lastUrls) {
-    utils.newWindow()
+    utils.newWindow(null, windowBounds)
   } else {
-    utils.newWindow(lastUrls[0])
+    utils.newWindow(lastUrls[0], windowBounds)
     for (i = 1; i < lastUrls.length; i++) {
       utils.newTab(lastUrls[i])
     }
