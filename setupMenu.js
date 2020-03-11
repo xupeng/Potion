@@ -1,4 +1,4 @@
-const { Menu, BrowserWindow, dialog } = require('electron');
+const { shell, Menu, BrowserWindow, dialog } = require('electron');
 const utils = require('./utils');
 const log = require('electron-log');
 const fs = require('fs');
@@ -16,6 +16,7 @@ function setupSystemMenu() {
             return utils.newTab();
           }
         },
+        { role: "close" },
         {
           label: "Print to PDF",
           accelerator: "Ctrl+Shift+P",
@@ -38,7 +39,12 @@ function setupSystemMenu() {
             })
           }
         },
-        { role: "close" },
+        {
+          label: "Print",
+          click: function (item, focusedWindow) {
+            focusedWindow.webContents.print()
+          }
+        },
       ]
       : [
         {
@@ -158,7 +164,7 @@ function setupSystemMenu() {
       {
         label: "Open Help && Support",
         click: function () {
-          electron_1.shell.openExternal("https://www.notion.so/help");
+          shell.openExternal("https://www.notion.so/help");
         },
       },
     ],
@@ -167,24 +173,6 @@ function setupSystemMenu() {
     role: "appMenu",
     submenu: [
       { role: "about" },
-      { type: "separator" },
-      {
-        label: "Reset App && Clear Local Data",
-        click: function (item, focusedWindow) {
-          return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-              switch (_a.label) {
-                case 0: return [4, fs.remove(electron_1.app.getPath("userData"))];
-                case 1:
-                  _a.sent();
-                  electron_1.app.relaunch();
-                  electron_1.app.exit();
-                  return [2];
-              }
-            });
-          });
-        },
-      },
       { type: "separator" },
       { role: "services" },
       { type: "separator" },
