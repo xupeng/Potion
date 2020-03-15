@@ -1,7 +1,7 @@
 {
     "name": "potion",
     "productName": "Potion",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "icon": "assets/Potion.icns",
     "displayName": "Potion",
     "description": "Personalized Notion.",
@@ -16,6 +16,7 @@
         "Productivity"
     ],
     "dependencies": {
+        "electron-localshortcut": "^3.2.1",
         "electron-log": "^4.0.7",
         "electron-settings": "^3.2.0"
     },

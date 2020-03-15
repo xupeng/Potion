@@ -4,11 +4,11 @@ const log = require('electron-log');
 const settings = require('electron-settings');
 const { readFile } = require('fs');
 
-
 function newWindow(url = null, windowBounds = null) {
     let win = new BrowserWindow({
         title: 'Potion',
-        tabbingIdentifier: "Potion",
+        tabbingIdentifier: 'Potion',
+        backgroundThrottling: false,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js')
         }
@@ -21,8 +21,13 @@ function newWindow(url = null, windowBounds = null) {
     if (!url) {
         url = 'https://notion.so/'
     }
-    log.debug('New window with URL:', url)
+    log.debug('New window with URL:', url, win.id)
     win.loadURL(url)
+
+    const electronLocalshortcut = require('electron-localshortcut');
+    electronLocalshortcut.register(win, 'Command+T', () => {
+        newTab()
+    });
 
     win.webContents.on('did-finish-load', function () {
         injectCSS(win)
@@ -56,12 +61,18 @@ function newWindow(url = null, windowBounds = null) {
 }
 
 function newTab(url) {
+    let lastID = 0
+    let windows = BrowserWindow.getAllWindows()
+    windows.forEach(window => {
+        if (window.id > lastID) {
+            lastID = window.id
+        }
+    });
+    let win = BrowserWindow.fromId(lastID)
     if (!url) {
         url = BrowserWindow.getFocusedWindow().webContents.getURL()
     }
-    tw = newWindow(url)
-    let windows = BrowserWindow.getAllWindows()
-    let win = windows[windows.length - 1]
+    let tw = newWindow(url, null)
     win.addTabbedWindow(tw)
 }
 
@@ -76,7 +87,30 @@ function loadWindowBounds() {
     return settings.get('windowBounds')
 }
 
+function saveURLs() {
+    let lastUrls = []
+    let savedWindows = new Set([])
+    let startWindow
+    while (true) {
+        startWindow = BrowserWindow.getFocusedWindow()
+        if (savedWindows.has(startWindow.id)) {
+            break
+        }
+        savedWindows.add(startWindow.id)
+        log.debug(startWindow.id, startWindow.webContents.getTitle(), startWindow.webContents.getURL())
+        lastUrls.push(startWindow.webContents.getURL())
+        startWindow.selectNextTab()
+    }
+    settings.set('lastUrls', lastUrls)
+}
+
+function loadURLs() {
+    return settings.get('lastUrls')
+}
+
 exports.newTab = newTab;
 exports.injectCSS = injectCSS;
 exports.newWindow = newWindow;
 exports.loadWindowBounds = loadWindowBounds;
+exports.saveURLs = saveURLs;
+exports.loadURLs = loadURLs;

@@ -4,7 +4,6 @@ const settings = require('electron-settings');
 const setupmenu = require('./setupMenu');
 const utils = require('./utils');
 
-
 if (!app.requestSingleInstanceLock()) {
     log.debug('There is already Potion running, quit...')
     app.quit()
@@ -19,7 +18,7 @@ app.on('ready', function () {
     app.allowRendererProcessReuse = false
 
     let windowBounds = utils.loadWindowBounds()
-    let lastUrls = settings.get('lastUrls')
+    let lastUrls = utils.loadURLs()
     if (!lastUrls) {
         utils.newWindow(null, windowBounds)
     } else {
@@ -55,15 +54,13 @@ app.on('window-all-closed', function () {
 })
 
 app.on('activate', function () {
-    if (BrowserWindow.getAllWindows().length === 0) createWindow()
+    if (BrowserWindow.getAllWindows().length === 0) utils.newWindow()
 })
 
 app.on('before-quit', function () {
-    wcs = webContents.getAllWebContents()
-    let lastUrls = []
-    for (i = 0; i < wcs.length; i++) {
-        let _url = wcs[i].getURL()
-        lastUrls.unshift(_url)
-    }
-    settings.set('lastUrls', lastUrls)
+    utils.saveURLs()
+})
+
+app.on('new-window-for-tab', () => {
+    utils.newTab()
 })

@@ -116,27 +116,17 @@ function setupSystemMenu() {
             { role: "togglefullscreen" },
         ],
     };
-    var tabMenu = {
-        label: "Tab",
-        submenu: [
-            {
-                label: "Next Tab",
-                role: "selectNextTab",
-                accelerator: "Ctrl+Tab"
-            },
-            {
-                label: "Previous Tab",
-                role: "selectPreviousTab",
-                accelerator: "Ctrl+Shift+Tab"
-            }
-        ]
-    };
     var windowMenu = {
         role: "windowMenu",
         submenu: isElectronMac
             ? [
                 { role: "minimize" },
                 { role: "zoom" },
+                { type: "separator" },
+                { role: "selectPreviousTab", label: "Show Previous Tab", accelerator: "Ctrl+Shift+Tab" },
+                { role: "selectNextTab", label: "Show Next Tab", accelerator: "Ctrl+Tab" },
+                { role: "moveTabToNewWindow", label: "Move Tab to New Window" },
+                { role: "mergeAllWindows", label: "Merge All Windows" },
                 { type: "separator" },
                 { role: "front" },
             ]
@@ -192,7 +182,6 @@ function setupSystemMenu() {
     ];
     if (isElectronMac) {
         template.unshift(appMenu);
-        template.splice(4, 0, tabMenu);
     }
     var menu = Menu.buildFromTemplate(template);
     Menu.setApplicationMenu(menu);
