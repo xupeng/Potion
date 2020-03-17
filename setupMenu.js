@@ -116,6 +116,25 @@ function setupSystemMenu() {
             { role: "togglefullscreen" },
         ],
     };
+    var historyMenu = {
+        label: "History",
+        submenu: [
+            {
+                label: "Back",
+                accelerator: "CmdorCtrl+[",
+                click: function (menuItemm, focusedWindow) {
+                    focusedWindow.webContents.goBack();
+                }
+            },
+            {
+                label: "Forward",
+                accelerator: "CmdorCtrl+]",
+                click: function (menuItemm, focusedWindow) {
+                    focusedWindow.webContents.goForward();
+                }
+            }
+        ]
+    };
     var windowMenu = {
         role: "windowMenu",
         submenu: isElectronMac
@@ -177,6 +196,7 @@ function setupSystemMenu() {
         fileMenu,
         editMenu,
         viewMenu,
+        historyMenu,
         windowMenu,
         helpMenu,
     ];
