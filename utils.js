@@ -89,17 +89,24 @@ function loadWindowBounds() {
 
 function saveURLs() {
     let lastUrls = []
-    let savedWindows = new Set([])
-    let startWindow
-    while (true) {
-        startWindow = BrowserWindow.getFocusedWindow()
-        if (savedWindows.has(startWindow.id)) {
-            break
+    if (BrowserWindow.getFocusedWindow()) {
+        let savedWindows = new Set([])
+        let startWindow
+        while (true) {
+            startWindow = BrowserWindow.getFocusedWindow()
+            if (savedWindows.has(startWindow.id)) {
+                break
+            }
+            savedWindows.add(startWindow.id)
+            log.debug(startWindow.id, startWindow.webContents.getTitle(), startWindow.webContents.getURL())
+            lastUrls.push(startWindow.webContents.getURL())
+            startWindow.selectNextTab()
         }
-        savedWindows.add(startWindow.id)
-        log.debug(startWindow.id, startWindow.webContents.getTitle(), startWindow.webContents.getURL())
-        lastUrls.push(startWindow.webContents.getURL())
-        startWindow.selectNextTab()
+    } else {
+        let windows = BrowserWindow.getAllWindows()
+        windows.forEach(window => {
+            lastUrls.push(window.webContents.getURL())
+        })
     }
     settings.set('lastUrls', lastUrls)
 }
