@@ -35,8 +35,13 @@ function newWindow(url = null, windowBounds = null) {
 
     win.webContents.on('new-window', function (event, url) {
         event.preventDefault()
-        const { shell } = require('electron')
-        shell.openExternal(url)
+        console.log(url)
+        if (url.match(/^https:\/\/(www\.)?notion.so/)) {
+            newTab(url)
+        } else {
+            const { shell } = require('electron')
+            shell.openExternal(url)
+        }
     });
 
     win.on('will-resize', (event, bounds) => {
