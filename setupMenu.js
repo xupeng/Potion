@@ -24,7 +24,7 @@ function setupSystemMenu() {
                         let title = focusedWindow.webContents.getTitle()
                         let filePath = dialog.showSaveDialogSync(focusedWindow, { defaultPath: `${title}.pdf` })
                         let options = {
-                            'marginsType': 2,
+                            'marginsType': 0,
                             'pageSize': 'A4',
                             'printBackground': false,
                             'landscape': false
