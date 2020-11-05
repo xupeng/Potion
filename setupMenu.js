@@ -95,6 +95,11 @@ function setupSystemMenu() {
                     BrowserWindow.getFocusedWindow().webContents.reload()
                 },
             },
+            { type: 'separator' },
+            { role: 'resetzoom' },
+            { role: 'zoomin' },
+            { role: 'zoomout' },
+            { type: 'separator' },
             {
                 label: "Toggle Developer Tools",
                 accelerator: isElectronMac ? "Alt+Command+I" : "Ctrl+Shift+I",
