@@ -1,7 +1,7 @@
 {
     "name": "potion",
     "productName": "Potion",
-    "version": "0.1.4",
+    "version": "0.1.5",
     "icon": "assets/Potion.icns",
     "displayName": "Potion",
     "description": "Personalized Notion.",
