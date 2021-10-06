@@ -3,6 +3,7 @@ const path = require('path');
 const log = require('electron-log');
 const settings = require('electron-settings');
 const { readFile } = require('fs');
+const os = require('os');
 
 function newWindow(url = null, windowBounds = null) {
     let win = new BrowserWindow({
@@ -82,9 +83,11 @@ function newTab(url) {
 }
 
 function injectCSS(win) {
-    css_file = path.join(__dirname, 'style.css')
+    css_file = path.join(os.homedir(), '.potion', 'style.css')
     readFile(css_file, "utf-8", (err, data) => {
-        win.webContents.insertCSS(data)
+        if (!err) {
+            win.webContents.insertCSS(data)
+        }
     })
 }
 

@@ -1,5 +1,5 @@
 * {
-		font-family: "Caecilia LT Std", AaFangSong, "TsangerJinKai01-9128 W04", STKaiti, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
+		font-family: "Caecilia LT Std", AaFangSong, STKaiti, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
 		line-height: 1.7em;
 }
 

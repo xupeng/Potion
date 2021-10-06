@@ -18,3 +18,5 @@ Build
 npm install
 npm run build
 ```
+
+CSS path: `$HOME/.potion/css.style`
