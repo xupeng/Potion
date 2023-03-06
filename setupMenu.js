@@ -67,6 +67,7 @@ function setupSystemMenu() {
                 { role: "cut" },
                 { role: "copy" },
                 { role: "paste" },
+                { role: "pasteAndMatchStyle" },
                 { role: "selectAll" },
                 { type: "separator" },
                 {
@@ -81,6 +82,7 @@ function setupSystemMenu() {
                 { role: "cut" },
                 { role: "copy" },
                 { role: "paste" },
+                { role: "pasteAndMatchStyle" },
                 { type: "separator" },
                 { role: "selectAll" },
             ],
