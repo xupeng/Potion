@@ -25,25 +25,18 @@ function newWindow(url = null, windowBounds = null) {
     log.debug('New window with URL:', url, win.id)
     win.loadURL(url)
 
-    const electronLocalshortcut = require('electron-localshortcut');
-    electronLocalshortcut.register(win, 'Command+T', () => {
-        newTab()
-    });
-
     win.webContents.on('did-finish-load', function () {
         injectCSS(win)
-    });
+    })
 
-    win.webContents.on('new-window', function (event, url) {
-        event.preventDefault()
-        console.log(url)
+    win.webContents.setWindowOpenHandler(({ url }) => {
         if (url.match(/^https:\/\/(www\.)?notion.so/)) {
             newTab(url)
         } else {
             const { shell } = require('electron')
             shell.openExternal(url)
         }
-    });
+    })
 
     win.on('will-resize', (event, bounds) => {
         windowBounds = bounds
