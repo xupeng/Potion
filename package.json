@@ -24,7 +24,7 @@
     "author": "xupeng",
     "license": "CC0-1.0",
     "devDependencies": {
-        "electron": "^23.1.2",
+        "electron": "^23.3.13",
         "electron-packager": "^17.1.1",
         "minimist": ">=0.2.1"
     },
