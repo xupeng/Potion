@@ -40,6 +40,13 @@ function setupSystemMenu() {
                     }
                 },
                 {
+                    label: "Reload CSS",
+                    click: function (item, focusedWindow) {
+                        utils.reloadCSS()
+                    }
+                },
+
+                {
                     label: "Print",
                     click: function (item, focusedWindow) {
                         focusedWindow.webContents.print()

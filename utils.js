@@ -112,6 +112,13 @@ function saveURLs() {
     settings.set('lastUrls', lastUrls)
 }
 
+function reloadCSS() {
+    let windows = BrowserWindow.getAllWindows()
+    windows.forEach(window => {
+        injectCSS(window)
+    })
+}
+
 function loadURLs() {
     return settings.get('lastUrls')
 }
@@ -122,3 +129,4 @@ exports.newWindow = newWindow;
 exports.loadWindowBounds = loadWindowBounds;
 exports.saveURLs = saveURLs;
 exports.loadURLs = loadURLs;
+exports.reloadCSS = reloadCSS;
