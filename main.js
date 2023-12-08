@@ -17,6 +17,8 @@ app.on('ready', function () {
     app.name = 'Potion'
     app.allowRendererProcessReuse = false
 
+    console.log(`Electron version: ${process.versions.electron}`);
+
     let windowBounds = utils.loadWindowBounds()
     let lastUrls = utils.loadURLs()
     if (!lastUrls) {
